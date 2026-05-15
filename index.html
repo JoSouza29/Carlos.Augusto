@@ -116,6 +116,26 @@ body{
     }
 }
 
+.final-screen{
+    overflow-y:auto;
+    justify-content:flex-start;
+    padding-top:80px;
+    padding-bottom:80px;
+}
+
+.letter-container{
+    width:100%;
+    max-width:1000px;
+}
+
+.letter{
+    white-space:pre-line;
+    text-align:left;
+    line-height:2;
+    font-size:clamp(1rem,2vw,1.3rem);
+    margin-top:30px;
+}
+
 @media(max-width:768px){
 
     .title{
@@ -146,7 +166,7 @@ body{
     <!-- TELA 1 -->
     <section class="screen active">
         <h1 class="title typewriter"
-            data-text="Parabéns pela promoção, meu amor">
+            data-text="Parabéns pela promoção, meu amor 🤍!">
         </h1>
 
         <p class="subtitle typewriter"
@@ -172,7 +192,7 @@ body{
     <!-- TELA 3 -->
     <section class="screen">
         <p class="subtitle typewriter"
-           data-text="Com seu sonho de ser engenheiro elétrico há cerca de 12 anos, sempre se esforçou muito para alcançá-lo, fazendo SENAI para poder entender sobre seu sonho e como trilhar sua carreira...">
+           data-text="Com seu sonho de ser engenheiro eletricista há cerca de 12 anos, sempre se esforçou muito para alcançá-lo, fazendo SENAI para poder entender sobre seu sonho e como trilhar sua carreira...">
         </p>
 
         <div class="arrow" onclick="nextScreen()">
@@ -198,12 +218,60 @@ body{
         </h1>
 
         <p class="subtitle typewriter"
-           data-text="E essa semana veio a grande notícia, uma promoção pra engenheiro eletricista...">
+           data-text="Essa semana veio a notícia que você tanto sonhava e esperava!">
         </p>
 
-        <div class="arrow">
+        <p class="subtitle typewriter"
+           data-text="Meu amor não tenho palavras que expressão o tamanho do meu orgulho por você!">
+        </p>
+
+        <div class="arrow" onclick="nextScreen()">
             <span>></span>
         </div>
+    </section>
+
+    <!-- TELA 6 -->
+    <section class="screen final-screen">
+
+        <h1 class="title typewriter"
+            data-text="Escrevi para você!">
+        </h1>
+
+        <div class="letter-container">
+            <p class="subtitle letter typewriter"
+data-text="Hoje eu queria te olhar e conseguir colocar em palavras tudo o que sinto vendo você conquistar essa promoção depois de tantos anos. E sinceramente? Não é só uma promoção. É a prova de que toda a sua dedicação valeu a pena.
+
+Eu vi de perto cada desafio.
+Vi os dias difíceis, o cansaço, os obstáculos, as injustiças, as pirraças do Valério, as dúvidas e até os momentos em que parecia mais fácil desistir. 
+Mas você escolheu continuar. Escolheu enfrentar tudo de cabeça erguida, com coragem, responsabilidade e uma força que eu admiro todos os dias.
+
+ poucas pessoas saibam o quanto você lutou para chegar até aqui.
+
+Foram 12 anos construindo sua história com esforço, compromisso e caráter. E o mais bonito é que você nunca precisou passar por cima de ninguém para crescer. Você cresceu por mérito, coragem, profissionalismo, competência, residência  e dedicação.
+
+E eu preciso te dizer:
+eu tenho um orgulho imenso de você.
+
+Orgulho do profissional incrível que você se tornou, mas principalmente do homem que você é dentro de casa. O homem que sonha, que luta, que protege, que não desiste da família e que me inspira diariamente.
+
+Agora, oficialmente promovido… será que eu já posso ficar em casa? 😅
+
+Mas brincadeiras à parte…
+você merece viver esse momento.
+Merece comemorar.
+Merece sentir orgulho de si mesmo.
+
+E eu quero estar ao seu lado em cada nova conquista que ainda vai chegar, porque eu sei que isso é só o começo.
+
+Parabéns, meu amor.
+Você conseguiu.
+E eu nunca tive tanta certeza de que o seu esforço seria recompensado.
+
+Com amor,
+sua maior admiradora. ❤️">
+            </p>
+        </div>
+
     </section>
 
 </div>
@@ -212,7 +280,7 @@ body{
 const screens = document.querySelectorAll('.screen');
 let currentScreen = 0;
 
-function typeEffect(element, text, speed = 45){
+function typeEffect(element, text, speed = 63){
     element.innerHTML = "";
 
     let i = 0;
