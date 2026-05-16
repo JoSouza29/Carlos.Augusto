@@ -11,35 +11,37 @@
   --rose:#e8a0b0;--deep-rose:#c2607a;--gold:#d4a853;--pale-gold:#f0d898;
   --bg:#080510;--text-main:#fdf0f4;--text-muted:rgba(253,240,244,0.72);
 }
-html,body{width:100%;background:var(--bg);color:var(--text-main);font-family:'Lato',sans-serif;overflow:hidden;}
-body.scroll-active{overflow-y:auto;}
+html,body{width:100%;height:100%;background:var(--bg);color:var(--text-main);font-family:'Lato',sans-serif;overflow:hidden;}
 #particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
-.container{width:100%;min-height:100vh;position:relative;z-index:1;}
+.container{width:100%;height:100vh;position:relative;z-index:1;overflow:hidden;}
 
-/* todas as telas compartilham a mesma base */
 .screen{
-  position:absolute;width:100%;min-height:100vh;
+  position:absolute;top:0;left:0;width:100%;height:100%;
   display:flex;flex-direction:column;justify-content:center;align-items:center;
   padding:40px 30px;text-align:center;
   opacity:0;transform:translateX(100%);
   transition:opacity 1.8s cubic-bezier(0.4,0,0.2,1),transform 1.8s cubic-bezier(0.4,0,0.2,1);
   pointer-events:none;
+  overflow:hidden;
 }
 .screen.active{opacity:1;transform:translateX(0);pointer-events:auto;}
 .screen.exit{opacity:0;transform:translateX(-100%);}
 
-/* tela da carta tem scroll */
+/* tela da carta: scroll interno */
 .screen.carta{
   justify-content:flex-start;
-  padding-top:70px;padding-bottom:120px;
-  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  padding-top:60px;
+  padding-bottom:100px;
+  scroll-behavior:smooth;
 }
 
 /* tela da caneta ocupa exatamente a viewport */
 .screen.caneta{
   justify-content:center;
   overflow:hidden;
-  height:100vh;
 }
 
 .title-deco{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
@@ -69,6 +71,23 @@ body.scroll-active{overflow-y:auto;}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
 
 .screen-num{position:fixed;bottom:30px;right:36px;font-size:0.68rem;letter-spacing:3px;color:rgba(212,168,83,0.3);font-family:'Lato',sans-serif;z-index:10;pointer-events:none;transition:opacity 0.6s;}
+
+/* indicador de scroll */
+.scroll-hint{
+  position:fixed;bottom:30px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  opacity:0;transition:opacity 0.8s ease;
+  pointer-events:none;z-index:10;
+}
+.scroll-hint.visible{opacity:1;}
+.scroll-hint span{font-size:0.65rem;letter-spacing:3px;color:rgba(232,160,176,0.5);font-family:'Lato',sans-serif;text-transform:uppercase;}
+.scroll-hint-arrow{
+  width:24px;height:24px;border-right:1px solid rgba(232,160,176,0.4);
+  border-bottom:1px solid rgba(232,160,176,0.4);
+  transform:rotate(45deg);
+  animation:scrollBounce 1.6s ease-in-out infinite;
+}
+@keyframes scrollBounce{0%,100%{transform:rotate(45deg) translateY(0);}50%{transform:rotate(45deg) translateY(5px);}}
 
 /* carta */
 .letter-container{width:100%;max-width:820px;padding:0 20px;margin:auto;}
@@ -136,6 +155,12 @@ body.scroll-active{overflow-y:auto;}
 <canvas id="particles"></canvas>
 <div class="screen-num" id="pageNum">01 / 07</div>
 
+<!-- indicador de scroll (apenas na carta) -->
+<div class="scroll-hint" id="scrollHint">
+  <span>rolar</span>
+  <div class="scroll-hint-arrow"></div>
+</div>
+
 <div class="container">
 
   <!-- 01 -->
@@ -178,7 +203,7 @@ body.scroll-active{overflow-y:auto;}
   </section>
 
   <!-- 06 CARTA -->
-  <section class="screen carta" data-page="6">
+  <section class="screen carta" data-page="6" id="cartaScreen">
     <div class="letter-container">
       <div class="letter-card">
         <p class="letter typewriter" data-text="Hoje eu queria te olhar e conseguir colocar em palavras tudo o que sinto vendo você conquistar essa promoção depois de tantos anos. E sinceramente? Não é só uma promoção. É a prova de que toda a sua dedicação valeu a pena.
@@ -226,31 +251,19 @@ sua maior admiradora. ❤️"></p>
   <section class="screen caneta" data-page="7">
     <div class="pen-content">
 
-      <!-- caneta desenhada em SVG puro, sem classes externas -->
       <div class="pen-svg-wrap">
         <svg width="80" height="250" viewBox="0 0 80 250" xmlns="http://www.w3.org/2000/svg">
-          <!-- corpo principal -->
           <rect x="25" y="8" width="30" height="148" rx="5" fill="#1a1028" stroke="#d4a853" stroke-width="1.2"/>
-          <!-- tampa dourada topo -->
           <rect x="25" y="8" width="30" height="20" rx="5" fill="#b8883a" stroke="#d4a853" stroke-width="1"/>
-          <!-- linha separadora tampa -->
           <line x1="25" y1="28" x2="55" y2="28" stroke="#d4a853" stroke-width="0.8"/>
-          <!-- clipe lateral -->
           <rect x="52" y="12" width="5" height="76" rx="2.5" fill="#c99a42" stroke="#d4a853" stroke-width="0.7"/>
           <ellipse cx="54.5" cy="90" rx="3.5" ry="3.5" fill="#c99a42" stroke="#d4a853" stroke-width="0.7"/>
-          <!-- anel decorativo rosa -->
           <rect x="25" y="144" width="30" height="9" rx="0" fill="#c2607a" stroke="#e8a0b0" stroke-width="0.8" opacity="0.75"/>
-          <!-- cone da ponta -->
           <polygon points="25,153 40,205 55,153" fill="#110d1c" stroke="#d4a853" stroke-width="1" stroke-linejoin="round"/>
-          <!-- ponta metálica -->
           <polygon points="34,197 40,224 46,197" fill="#c99a42" stroke="#d4a853" stroke-width="0.8"/>
-          <!-- bico fino -->
           <polygon points="38.5,222 40,234 41.5,222" fill="#d4a853"/>
-          <!-- gota de tinta animada -->
           <ellipse class="ink-drip" cx="40" cy="243" rx="2.5" ry="5" fill="#e8a0b0" opacity="0.9"/>
-          <!-- reflexo no corpo -->
           <rect x="29" y="18" width="3.5" height="96" rx="1.5" fill="white" opacity="0.05"/>
-          <!-- linha de escrita -->
           <line class="write-line" x1="-10" y1="248" x2="110" y2="248" stroke="#e8a0b0" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
         </svg>
       </div>
@@ -315,9 +328,33 @@ const screens = Array.from(document.querySelectorAll('.screen'));
 const total = screens.length;
 let current = 0;
 const pageNum = document.getElementById('pageNum');
+const scrollHint = document.getElementById('scrollHint');
+const cartaScreen = document.getElementById('cartaScreen');
 
 function updateNum() {
   pageNum.textContent = String(current + 1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0');
+}
+
+// mostra/esconde o indicador de scroll na tela da carta
+function updateScrollHint() {
+  const isCarta = screens[current].classList.contains('carta');
+  if (isCarta) {
+    setTimeout(() => scrollHint.classList.add('visible'), 2000);
+    // esconde ao chegar perto do fim do scroll
+    cartaScreen.addEventListener('scroll', onCartaScroll);
+  } else {
+    scrollHint.classList.remove('visible');
+    cartaScreen.removeEventListener('scroll', onCartaScroll);
+  }
+}
+
+function onCartaScroll() {
+  const remaining = cartaScreen.scrollHeight - cartaScreen.scrollTop - cartaScreen.clientHeight;
+  if (remaining < 120) {
+    scrollHint.classList.remove('visible');
+  } else {
+    scrollHint.classList.add('visible');
+  }
 }
 
 function typeEffect(el, text, speed, onDone) {
@@ -357,15 +394,14 @@ function nextScreen() {
   next.classList.add('active');
   updateNum();
 
-  // se for a carta, rola pro topo
   if (next.classList.contains('carta')) {
     next.scrollTop = 0;
   }
 
+  updateScrollHint();
   startTyping(next);
 }
 
-// inicializa
 updateNum();
 window.onload = () => startTyping(screens[0]);
 </script>
