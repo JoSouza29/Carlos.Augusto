@@ -11,9 +11,14 @@
   --rose:#e8a0b0;--deep-rose:#c2607a;--gold:#d4a853;--pale-gold:#f0d898;
   --bg:#080510;--text-main:#fdf0f4;--text-muted:rgba(253,240,244,0.72);
 }
-html,body{width:100%;height:100%;background:var(--bg);color:var(--text-main);font-family:'Lato',sans-serif;overflow:hidden;}
+html{background:var(--bg);}
+body{width:100%;background:var(--bg);color:var(--text-main);font-family:'Lato',sans-serif;overflow:hidden;}
+body.carta-mode{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;}
+
 #particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+
 .container{width:100%;height:100vh;position:relative;z-index:1;overflow:hidden;}
+body.carta-mode .container{display:none;}
 
 .screen{
   position:absolute;top:0;left:0;width:100%;height:100%;
@@ -21,28 +26,19 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text-main);fon
   padding:40px 30px;text-align:center;
   opacity:0;transform:translateX(100%);
   transition:opacity 1.8s cubic-bezier(0.4,0,0.2,1),transform 1.8s cubic-bezier(0.4,0,0.2,1);
-  pointer-events:none;
-  overflow:hidden;
+  pointer-events:none;overflow:hidden;
 }
 .screen.active{opacity:1;transform:translateX(0);pointer-events:auto;}
 .screen.exit{opacity:0;transform:translateX(-100%);}
+.screen.caneta{justify-content:center;overflow:hidden;}
 
-/* tela da carta: scroll interno */
-.screen.carta{
-  justify-content:flex-start;
-  overflow-y:auto;
-  overflow-x:hidden;
-  -webkit-overflow-scrolling:touch;
-  padding-top:60px;
-  padding-bottom:100px;
-  scroll-behavior:smooth;
+/* carta fora do container */
+#carta-page{
+  display:none;position:relative;z-index:1;
+  min-height:100vh;padding:60px 20px 130px;
+  flex-direction:column;align-items:center;
 }
-
-/* tela da caneta ocupa exatamente a viewport */
-.screen.caneta{
-  justify-content:center;
-  overflow:hidden;
-}
+body.carta-mode #carta-page{display:flex;}
 
 .title-deco{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
 .title-deco-line{width:40px;height:1px;background:linear-gradient(to right,transparent,var(--gold));}
@@ -70,27 +66,24 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text-main);fon
 .cursor{display:inline-block;width:1.5px;height:1em;background:var(--rose);margin-left:2px;vertical-align:text-bottom;animation:blink 0.9s ease-in-out infinite;}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
 
-.screen-num{position:fixed;bottom:30px;right:36px;font-size:0.68rem;letter-spacing:3px;color:rgba(212,168,83,0.3);font-family:'Lato',sans-serif;z-index:10;pointer-events:none;transition:opacity 0.6s;}
+.screen-num{position:fixed;bottom:30px;right:36px;font-size:0.68rem;letter-spacing:3px;color:rgba(212,168,83,0.3);font-family:'Lato',sans-serif;z-index:10;pointer-events:none;}
 
-/* indicador de scroll */
 .scroll-hint{
-  position:fixed;bottom:30px;left:50%;transform:translateX(-50%);
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
   display:flex;flex-direction:column;align-items:center;gap:6px;
-  opacity:0;transition:opacity 0.8s ease;
-  pointer-events:none;z-index:10;
+  opacity:0;transition:opacity 0.8s ease;pointer-events:none;z-index:10;
 }
 .scroll-hint.visible{opacity:1;}
 .scroll-hint span{font-size:0.65rem;letter-spacing:3px;color:rgba(232,160,176,0.5);font-family:'Lato',sans-serif;text-transform:uppercase;}
 .scroll-hint-arrow{
-  width:24px;height:24px;border-right:1px solid rgba(232,160,176,0.4);
-  border-bottom:1px solid rgba(232,160,176,0.4);
-  transform:rotate(45deg);
-  animation:scrollBounce 1.6s ease-in-out infinite;
+  width:22px;height:22px;
+  border-right:1px solid rgba(232,160,176,0.45);
+  border-bottom:1px solid rgba(232,160,176,0.45);
+  transform:rotate(45deg);animation:scrollBounce 1.6s ease-in-out infinite;
 }
-@keyframes scrollBounce{0%,100%{transform:rotate(45deg) translateY(0);}50%{transform:rotate(45deg) translateY(5px);}}
+@keyframes scrollBounce{0%,100%{transform:rotate(45deg) translateY(0);}50%{transform:rotate(45deg) translateY(6px);}}
 
-/* carta */
-.letter-container{width:100%;max-width:820px;padding:0 20px;margin:auto;}
+.letter-container{width:100%;max-width:820px;margin:auto;}
 .letter-card{background:rgba(255,255,255,0.034);border:1px solid rgba(232,160,176,0.18);border-radius:16px;padding:52px 52px;position:relative;backdrop-filter:blur(8px);}
 .letter-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,168,83,0.6),transparent);}
 .letter{white-space:pre-line;text-align:left;line-height:2.05;font-size:clamp(0.95rem,1.8vw,1.15rem);font-weight:300;color:var(--text-muted);font-family:'Lato',sans-serif;}
@@ -99,48 +92,19 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text-main);fon
 .footer-heart{font-size:1.5rem;animation:heartbeat 2s ease-in-out infinite;}
 @keyframes heartbeat{0%,100%{transform:scale(1);}14%{transform:scale(1.15);}28%{transform:scale(1);}42%{transform:scale(1.08);}56%{transform:scale(1);}}
 
-/* caneta */
-.pen-content{
-  display:flex;flex-direction:row;align-items:center;justify-content:center;
-  gap:clamp(32px,6vw,80px);flex-wrap:wrap;
-}
-.pen-svg-wrap{
-  animation:penFloat 3.5s ease-in-out infinite;
-  filter:drop-shadow(0 0 18px rgba(232,160,176,0.25));
-}
-@keyframes penFloat{
-  0%,100%{transform:translateY(0) rotate(-15deg);}
-  50%{transform:translateY(-16px) rotate(-15deg);}
-}
+.pen-content{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:clamp(32px,6vw,80px);flex-wrap:wrap;}
+.pen-svg-wrap{animation:penFloat 3.5s ease-in-out infinite;filter:drop-shadow(0 0 18px rgba(232,160,176,0.25));}
+@keyframes penFloat{0%,100%{transform:translateY(0) rotate(-15deg);}50%{transform:translateY(-16px) rotate(-15deg);}}
 .ink-phrase{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.2rem,3vw,2.1rem);
-  font-weight:400;font-style:italic;
-  color:var(--text-main);
-  letter-spacing:0.03em;line-height:1.55;
-  text-align:left;max-width:360px;
-  opacity:0;transform:translateY(14px);
-  transition:opacity 2s ease 1.2s,transform 2s ease 1.2s;
+  font-family:'Playfair Display',serif;font-size:clamp(1.2rem,3vw,2.1rem);
+  font-weight:400;font-style:italic;color:var(--text-main);
+  letter-spacing:0.03em;line-height:1.55;text-align:left;max-width:360px;
+  opacity:0;transform:translateY(14px);transition:opacity 2s ease 1.2s,transform 2s ease 1.2s;
 }
 .screen.active .ink-phrase{opacity:1;transform:translateY(0);}
-.ink-sub{
-  display:block;margin-top:12px;
-  font-family:'Lato',sans-serif;
-  font-size:clamp(0.85rem,1.5vw,1.05rem);
-  font-style:normal;font-weight:300;
-  color:rgba(212,168,83,0.8);letter-spacing:0.05em;
-}
-
-@keyframes drip{
-  0%,100%{transform:scaleY(0.3) translateY(-4px);opacity:0.2;}
-  50%{transform:scaleY(1) translateY(0);opacity:0.9;}
-}
+@keyframes drip{0%,100%{transform:scaleY(0.3) translateY(-4px);opacity:0.2;}50%{transform:scaleY(1) translateY(0);opacity:0.9;}}
 .ink-drip{animation:drip 2.4s ease-in-out infinite;transform-origin:top center;}
-
-@keyframes writeLine{
-  0%{stroke-dashoffset:130;}
-  100%{stroke-dashoffset:0;}
-}
+@keyframes writeLine{0%{stroke-dashoffset:130;}100%{stroke-dashoffset:0;}}
 .write-line{stroke-dasharray:130;stroke-dashoffset:130;animation:writeLine 2s ease-in-out infinite alternate;}
 
 @media(max-width:600px){
@@ -154,15 +118,12 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text-main);fon
 
 <canvas id="particles"></canvas>
 <div class="screen-num" id="pageNum">01 / 07</div>
-
-<!-- indicador de scroll (apenas na carta) -->
 <div class="scroll-hint" id="scrollHint">
   <span>rolar</span>
   <div class="scroll-hint-arrow"></div>
 </div>
 
 <div class="container">
-
   <!-- 01 -->
   <section class="screen active" data-page="1">
     <div class="title-deco"><div class="title-deco-line"></div><div class="title-deco-dot"></div><div class="title-deco-line right"></div></div>
@@ -202,11 +163,82 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text-main);fon
     <div class="arrow" onclick="nextScreen()"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
   </section>
 
-  <!-- 06 CARTA -->
-  <section class="screen carta" data-page="6" id="cartaScreen">
-    <div class="letter-container">
-      <div class="letter-card">
-        <p class="letter typewriter" data-text="Hoje eu queria te olhar e conseguir colocar em palavras tudo o que sinto vendo você conquistar essa promoção depois de tantos anos. E sinceramente? Não é só uma promoção. É a prova de que toda a sua dedicação valeu a pena.
+  <!-- 07 CANETA -->
+  <section class="screen caneta" data-page="7">
+    <div class="pen-content">
+      <div class="pen-svg-wrap">
+        <svg width="80" height="250" viewBox="0 0 80 250" xmlns="http://www.w3.org/2000/svg">
+          <rect x="25" y="8" width="30" height="148" rx="5" fill="#1a1028" stroke="#d4a853" stroke-width="1.2"/>
+          <rect x="25" y="8" width="30" height="20" rx="5" fill="#b8883a" stroke="#d4a853" stroke-width="1"/>
+          <line x1="25" y1="28" x2="55" y2="28" stroke="#d4a853" stroke-width="0.8"/>
+          <rect x="52" y="12" width="5" height="76" rx="2.5" fill="#c99a42" stroke="#d4a853" stroke-width="0.7"/>
+          <ellipse cx="54.5" cy="90" rx="3.5" ry="3.5" fill="#c99a42" stroke="#d4a853" stroke-width="0.7"/>
+          <rect x="25" y="144" width="30" height="9" rx="0" fill="#c2607a" stroke="#e8a0b0" stroke-width="0.8" opacity="0.75"/>
+          <polygon points="25,153 40,205 55,153" fill="#110d1c" stroke="#d4a853" stroke-width="1" stroke-linejoin="round"/>
+          <polygon points="34,197 40,224 46,197" fill="#c99a42" stroke="#d4a853" stroke-width="0.8"/>
+          <polygon points="38.5,222 40,234 41.5,222" fill="#d4a853"/>
+          <ellipse class="ink-drip" cx="40" cy="243" rx="2.5" ry="5" fill="#e8a0b0" opacity="0.9"/>
+          <rect x="29" y="18" width="3.5" height="96" rx="1.5" fill="white" opacity="0.05"/>
+          <line class="write-line" x1="-10" y1="248" x2="110" y2="248" stroke="#e8a0b0" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+        </svg>
+      </div>
+      <div class="ink-phrase">Espero que a tinta acabe...</div>
+    </div>
+  </section>
+</div>
+
+<!-- 06 CARTA — fora do container, usa scroll nativo do body/html -->
+<div id="carta-page">
+  <div class="letter-container">
+    <div class="letter-card">
+      <p class="letter" id="cartaText"></p>
+      <div class="letter-footer">
+        <div class="footer-line"></div>
+        <span class="footer-heart">❤️</span>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center;margin-top:44px;">
+      <div class="arrow" style="margin-top:0;" onclick="nextFromCarta()"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas=document.getElementById('particles');
+const ctx=canvas.getContext('2d');
+let W,H,particles=[];
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+const COLORS=['#e8a0b0','#d4a853','#f0d898','rgba(232,160,176,0.6)','rgba(212,168,83,0.5)'];
+function makeP(){return{x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.4+0.3,vx:(Math.random()-0.5)*0.18,vy:-Math.random()*0.22-0.06,alpha:Math.random()*0.7+0.15,color:COLORS[Math.floor(Math.random()*COLORS.length)],tw:Math.random()*Math.PI*2,tws:0.018+Math.random()*0.025};}
+(function initP(){particles=[];const N=Math.min(110,Math.floor(W*H/8000));for(let i=0;i<N;i++)particles.push(makeP());})();
+(function drawP(){ctx.clearRect(0,0,W,H);particles.forEach(p=>{p.tw+=p.tws;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=p.color;ctx.globalAlpha=p.alpha*(0.5+0.5*Math.sin(p.tw));ctx.fill();ctx.globalAlpha=1;p.x+=p.vx;p.y+=p.vy;if(p.y<-5){p.y=H+5;p.x=Math.random()*W;}if(p.x<-5)p.x=W+5;if(p.x>W+5)p.x=-5;});requestAnimationFrame(drawP);})();
+
+const screens=Array.from(document.querySelectorAll('.container .screen'));
+const pageNum=document.getElementById('pageNum');
+const scrollHint=document.getElementById('scrollHint');
+const TOTAL=7;
+let current=0;
+let onCarta=false;
+
+function updateNum(n){pageNum.textContent=String(n).padStart(2,'0')+' / '+String(TOTAL).padStart(2,'0');}
+
+function typeEffect(el,text,speed,onDone){
+  el.innerHTML='';let i=0;
+  const cursor=document.createElement('span');cursor.className='cursor';
+  const iv=setInterval(()=>{el.innerHTML=text.substring(0,i);el.appendChild(cursor);i++;if(i>text.length){clearInterval(iv);if(onDone)onDone();}},speed);
+}
+
+function startTyping(screen){
+  let delay=0;
+  Array.from(screen.querySelectorAll('.typewriter')).forEach(el=>{
+    const text=el.getAttribute('data-text');
+    setTimeout(()=>typeEffect(el,text,70),delay);
+    delay+=text.length*70*0.8+600;
+  });
+}
+
+const CARTA_TEXT=`Hoje eu queria te olhar e conseguir colocar em palavras tudo o que sinto vendo você conquistar essa promoção depois de tantos anos. E sinceramente? Não é só uma promoção. É a prova de que toda a sua dedicação valeu a pena.
 
 Eu vi de perto cada desafio.
 Vi os dias difíceis, o cansaço, os obstáculos, as injustiças, as pirraças do Valério, as dúvidas e até os momentos em que parecia mais fácil desistir.
@@ -235,175 +267,55 @@ Você conseguiu.
 E eu nunca tive tanta certeza de que o seu esforço seria recompensado.
 
 Com amor,
-sua maior admiradora. ❤️"></p>
-        <div class="letter-footer">
-          <div class="footer-line"></div>
-          <span class="footer-heart">❤️</span>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:center;margin-top:44px;">
-        <div class="arrow" style="margin-top:0;" onclick="nextScreen()"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
-      </div>
-    </div>
-  </section>
+sua maior admiradora. ❤️`;
 
-  <!-- 07 CANETA -->
-  <section class="screen caneta" data-page="7">
-    <div class="pen-content">
-
-      <div class="pen-svg-wrap">
-        <svg width="80" height="250" viewBox="0 0 80 250" xmlns="http://www.w3.org/2000/svg">
-          <rect x="25" y="8" width="30" height="148" rx="5" fill="#1a1028" stroke="#d4a853" stroke-width="1.2"/>
-          <rect x="25" y="8" width="30" height="20" rx="5" fill="#b8883a" stroke="#d4a853" stroke-width="1"/>
-          <line x1="25" y1="28" x2="55" y2="28" stroke="#d4a853" stroke-width="0.8"/>
-          <rect x="52" y="12" width="5" height="76" rx="2.5" fill="#c99a42" stroke="#d4a853" stroke-width="0.7"/>
-          <ellipse cx="54.5" cy="90" rx="3.5" ry="3.5" fill="#c99a42" stroke="#d4a853" stroke-width="0.7"/>
-          <rect x="25" y="144" width="30" height="9" rx="0" fill="#c2607a" stroke="#e8a0b0" stroke-width="0.8" opacity="0.75"/>
-          <polygon points="25,153 40,205 55,153" fill="#110d1c" stroke="#d4a853" stroke-width="1" stroke-linejoin="round"/>
-          <polygon points="34,197 40,224 46,197" fill="#c99a42" stroke="#d4a853" stroke-width="0.8"/>
-          <polygon points="38.5,222 40,234 41.5,222" fill="#d4a853"/>
-          <ellipse class="ink-drip" cx="40" cy="243" rx="2.5" ry="5" fill="#e8a0b0" opacity="0.9"/>
-          <rect x="29" y="18" width="3.5" height="96" rx="1.5" fill="white" opacity="0.05"/>
-          <line class="write-line" x1="-10" y1="248" x2="110" y2="248" stroke="#e8a0b0" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
-        </svg>
-      </div>
-
-      <div class="ink-phrase">
-        Espero que a tinta acabe...
-      </div>
-
-    </div>
-  </section>
-
-</div>
-
-<script>
-const canvas = document.getElementById('particles');
-const ctx = canvas.getContext('2d');
-let W, H, particles = [];
-
-function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-resize();
-window.addEventListener('resize', resize);
-
-const COLORS = ['#e8a0b0','#d4a853','#f0d898','rgba(232,160,176,0.6)','rgba(212,168,83,0.5)'];
-
-function makeParticle() {
-  return {
-    x: Math.random() * W, y: Math.random() * H,
-    r: Math.random() * 1.4 + 0.3,
-    vx: (Math.random() - 0.5) * 0.18,
-    vy: -Math.random() * 0.22 - 0.06,
-    alpha: Math.random() * 0.7 + 0.15,
-    color: COLORS[Math.floor(Math.random() * COLORS.length)],
-    tw: Math.random() * Math.PI * 2,
-    tws: 0.018 + Math.random() * 0.025
-  };
+function onBodyScroll(){
+  const remaining=document.documentElement.scrollHeight-window.scrollY-window.innerHeight;
+  scrollHint.classList.toggle('visible',remaining>150);
 }
 
-function initParticles() {
-  particles = [];
-  const N = Math.min(110, Math.floor(W * H / 8000));
-  for (let i = 0; i < N; i++) particles.push(makeParticle());
-}
-initParticles();
-
-function drawParticles() {
-  ctx.clearRect(0, 0, W, H);
-  particles.forEach(p => {
-    p.tw += p.tws;
-    const a = p.alpha * (0.5 + 0.5 * Math.sin(p.tw));
-    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = p.color; ctx.globalAlpha = a; ctx.fill(); ctx.globalAlpha = 1;
-    p.x += p.vx; p.y += p.vy;
-    if (p.y < -5) { p.y = H + 5; p.x = Math.random() * W; }
-    if (p.x < -5) p.x = W + 5;
-    if (p.x > W + 5) p.x = -5;
-  });
-  requestAnimationFrame(drawParticles);
-}
-drawParticles();
-
-const screens = Array.from(document.querySelectorAll('.screen'));
-const total = screens.length;
-let current = 0;
-const pageNum = document.getElementById('pageNum');
-const scrollHint = document.getElementById('scrollHint');
-const cartaScreen = document.getElementById('cartaScreen');
-
-function updateNum() {
-  pageNum.textContent = String(current + 1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0');
+function showCarta(){
+  onCarta=true;
+  document.body.classList.add('carta-mode');
+  window.scrollTo(0,0);
+  updateNum(6);
+  typeEffect(document.getElementById('cartaText'),CARTA_TEXT,28);
+  setTimeout(()=>scrollHint.classList.add('visible'),2200);
+  window.addEventListener('scroll',onBodyScroll,{passive:true});
 }
 
-// mostra/esconde o indicador de scroll na tela da carta
-function updateScrollHint() {
-  const isCarta = screens[current].classList.contains('carta');
-  if (isCarta) {
-    setTimeout(() => scrollHint.classList.add('visible'), 2000);
-    // esconde ao chegar perto do fim do scroll
-    cartaScreen.addEventListener('scroll', onCartaScroll);
-  } else {
-    scrollHint.classList.remove('visible');
-    cartaScreen.removeEventListener('scroll', onCartaScroll);
+function nextFromCarta(){
+  onCarta=false;
+  document.body.classList.remove('carta-mode');
+  window.removeEventListener('scroll',onBodyScroll);
+  scrollHint.classList.remove('visible');
+  window.scrollTo(0,0);
+  const caneta=screens[screens.length-1];
+  caneta.classList.add('active');
+  updateNum(7);
+}
+
+function nextScreen(){
+  if(onCarta)return;
+  if(current===4){
+    const old=screens[current];
+    old.classList.remove('active');old.classList.add('exit');
+    setTimeout(()=>old.classList.remove('exit'),1300);
+    setTimeout(showCarta,400);
+    return;
   }
-}
-
-function onCartaScroll() {
-  const remaining = cartaScreen.scrollHeight - cartaScreen.scrollTop - cartaScreen.clientHeight;
-  if (remaining < 120) {
-    scrollHint.classList.remove('visible');
-  } else {
-    scrollHint.classList.add('visible');
-  }
-}
-
-function typeEffect(el, text, speed, onDone) {
-  el.innerHTML = '';
-  let i = 0;
-  const cursor = document.createElement('span');
-  cursor.className = 'cursor';
-  const iv = setInterval(() => {
-    el.innerHTML = text.substring(0, i);
-    el.appendChild(cursor);
-    i++;
-    if (i > text.length) { clearInterval(iv); if (onDone) onDone(); }
-  }, speed);
-}
-
-function startTyping(screen) {
-  const els = Array.from(screen.querySelectorAll('.typewriter'));
-  let delay = 0;
-  const isCarta = screen.classList.contains('carta');
-  els.forEach(el => {
-    const text = el.getAttribute('data-text');
-    const speed = isCarta ? 30 : 70;
-    setTimeout(() => typeEffect(el, text, speed), delay);
-    delay += text.length * (speed * 0.8) + 600;
-  });
-}
-
-function nextScreen() {
-  if (current >= total - 1) return;
-  const old = screens[current];
-  old.classList.remove('active');
-  old.classList.add('exit');
-  setTimeout(() => old.classList.remove('exit'), 1300);
-
+  if(current>=screens.length-1)return;
+  const old=screens[current];
+  old.classList.remove('active');old.classList.add('exit');
+  setTimeout(()=>old.classList.remove('exit'),1300);
   current++;
-  const next = screens[current];
-  next.classList.add('active');
-  updateNum();
-
-  if (next.classList.contains('carta')) {
-    next.scrollTop = 0;
-  }
-
-  updateScrollHint();
-  startTyping(next);
+  screens[current].classList.add('active');
+  updateNum(current+1);
+  startTyping(screens[current]);
 }
 
-updateNum();
-window.onload = () => startTyping(screens[0]);
+updateNum(1);
+window.onload=()=>startTyping(screens[0]);
 </script>
 </body>
 </html>
